@@ -6293,15 +6293,32 @@ void unload_filament(bool automatic)
 
 	//		extr_unload2();
 
-	current_position[E_AXIS] -= 45;
-	plan_buffer_line_curposXYZE(5200 / 60);
-	st_synchronize();
-	current_position[E_AXIS] -= 15;
-	plan_buffer_line_curposXYZE(1000 / 60);
-	st_synchronize();
-	current_position[E_AXIS] -= 20;
-	plan_buffer_line_curposXYZE(1000 / 60);
-	st_synchronize();
+//	current_position[E_AXIS] -= 45;
+//	plan_buffer_line_curposXYZE(5200 / 60);
+//	st_synchronize();
+//	current_position[E_AXIS] -= 15;
+//	plan_buffer_line_curposXYZE(1000 / 60);
+//	st_synchronize();
+//	current_position[E_AXIS] -= 20;
+//	plan_buffer_line_curposXYZE(1000 / 60);
+//	st_synchronize();
+    //Kuo unload filament using settings from variant.
+    #ifdef EXTRUDE_BEFORE_UNLOAD
+    current_position[E_AXIS] += UNLOAD_FILAMENT_DIST_0; //Kuo first extrude small amount to reduce tip size
+    // plan_buffer_line_curposXYZE(UNLOAD_FILAMENT_RATE_0 / 60, active_extruder);
+    plan_buffer_line_curposXYZE(UNLOAD_FILAMENT_RATE_0 / 60); //BRV - Prusa->Now includes 'active_extruder' within function
+    st_synchronize();
+    #endif
+    current_position[E_AXIS] += UNLOAD_FILAMENT_DIST_1;
+    plan_buffer_line_curposXYZE(UNLOAD_FILAMENT_RATE_1 / 60); //BRV - Prusa->Now includes 'active_extruder' within function
+    st_synchronize();
+    current_position[E_AXIS] += UNLOAD_FILAMENT_DIST_2;
+    plan_buffer_line_curposXYZE(UNLOAD_FILAMENT_RATE_2 / 60); //BRV - Prusa->Now includes 'active_extruder' within function
+    st_synchronize();
+    current_position[E_AXIS] += UNLOAD_FILAMENT_DIST_3;
+    plan_buffer_line_curposXYZE(UNLOAD_FILAMENT_RATE_3 / 60); //BRV - Prusa->Now includes 'active_extruder' within function
+    st_synchronize();
+    ++ 6247    //=== Kuo
 
 	lcd_display_message_fullscreen_P(_T(MSG_PULL_OUT_FILAMENT));
 
@@ -7794,7 +7811,8 @@ static bool lcd_selfcheck_axis_sg(unsigned char axis) {
 
 		printf_P(_N("Axis length difference:%.3f\n"), abs(measured_axis_length[0] - measured_axis_length[1]));
 	
-		if (abs(measured_axis_length[0] - measured_axis_length[1]) > 1) { //check if difference between first and second measurement is low
+//  		if (abs(measured_axis_length[0] - measured_axis_length[1]) > 1) { //check if difference between first and second measurement is low
+        if (abs(measured_axis_length[0] - measured_axis_length[1]) > 5) { //check if difference between first and second measurement is low
 			//loose pulleys
 			const char *_error_1;
 
